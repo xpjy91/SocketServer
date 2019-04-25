@@ -314,7 +314,7 @@ namespace PosServer
                 //dicCommand["sTranNo"] = sTranHeader.Substring(24, 4);        //거래번호
                 dicCommand["sTranNo"] = clsMain.SearchMaxTranNo();        //거래번호
                 dicCommand["sSysdate"] = sTranHeader.Substring(26, 8);        //시스템일자
-                dicCommand["sSaleTime"] = sTranHeader.Substring(34, 6);        //시간
+                dicCommand["sSaleTime"] = sTranHeader.Substring(34, 6);        //시스템시간
                 dicCommand["sTrData"] = sMsg;        //거래데이터
                 dicCommand["sTranType"] = sTranHeader.Substring(40, 2);        //거래구분
                 dicCommand["sTranKind"] = sTranHeader.Substring(42, 2);        //거래종류
@@ -400,7 +400,7 @@ namespace PosServer
             clsMain.PrintInqHeader(sInqHeader);
             clsMain.PrintPluInq(sInqData);
 
-            String sPluRsp = null;  // plu 결과 Msg
+            String sPluRet = null;  // plu 결과 Msg
             String sRspCd = "99";   //응답코드 -00:정상, 99:기타에러
             String sRet = sHeader + sInqHeader; //return Msg
 
@@ -446,39 +446,39 @@ namespace PosServer
                  * 
                  */
 
-                sPluRsp = "20";     //아이템ID                         - 20
+                sPluRet = "20";     //아이템ID                         - 20
                 if (dicRet != null)
                 {
                     sRspCd = "00";
-                    sPluRsp += sRspCd;                  //응답코드      (2)      - 00:정상, 99:기타에러
-                    sPluRsp += dicRet["sPluNo"].PadLeft(13,'0');        //상품코드      (13)
-                    sPluRsp += dicRet["sStoreNo"].PadLeft(4, '0');      //점포코드      (4)
-                    sPluRsp += "8888";          //거래처코드    (4)
-                    sPluRsp += dicRet["sPluNo"].PadLeft(13, '0');        //본부코드      (13)
-                    sPluRsp += "123456789012345";//분류코드      (15)
-                    sPluRsp += "3";             //상품구분      (1)      - 1:박스,2:보루,3:낱개
-                    sPluRsp += dicRet["sMaegaUnit"].PadLeft(8, '0');    //낱개매가      (8)
-                    sPluRsp += dicRet["sMaegaUnit"].PadLeft(8, '0');    //박스매가      (8)
-                    sPluRsp += dicRet["sMaegaUnit"].PadLeft(8, '0');    //보루매가      (8)
-                    sPluRsp += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인낱개매가  (8)
-                    sPluRsp += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인박스매가  (8)
-                    sPluRsp += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인보루매가  (8)
-                    sPluRsp += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대1낱개매가 (8)
-                    sPluRsp += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대1보루매가 (8)
-                    sPluRsp += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2낱개매가 (8)
-                    sPluRsp += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2박스매가 (8)
-                    sPluRsp += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2보루매가 (8)
-                    sPluRsp += "0";                     //행사구분      (1)     - 7:행사구분
-                    sPluRsp += "1";                     //할인가능여부  (1)     - 0:할인가능,1:할인불가
-                    sPluRsp += dicRet["sTaxSep"].PadLeft(1, '0');       //과세구분      (1)     - 0:과세,1:면세,2:영세
-                    sPluRsp += "0003";                  //박스입수      (4)
-                    sPluRsp += "2";                     //포인트적립가능구분 (1)- 1:적립가능,2:적립불가
-                    sPluRsp += "000";                   //예비          (3)
-                    sPluRsp += dicRet["sMlinkPlu"].PadLeft(13, '0');     //연결코드      (13)    - 첫자리,0:일반,1:공병,2:쇼핑백,3:P박스
-                    sPluRsp += dicRet["sPluNameOrd"].PadLeft(30, '0');   //상품명        (30)
-                    sPluRsp += dicRet["sPluSep"].PadLeft(1, '0');       //PLU구분       (1)     - 1:직영,2:특정
+                    sPluRet += sRspCd;                  //응답코드      (2)      - 00:정상, 99:기타에러
+                    sPluRet += dicRet["sPluNo"].PadLeft(13,'0');        //상품코드      (13)
+                    sPluRet += dicRet["sStoreNo"].PadLeft(4, '0');      //점포코드      (4)
+                    sPluRet += "8888";          //거래처코드    (4)
+                    sPluRet += dicRet["sPluNo"].PadLeft(13, '0');        //본부코드      (13)
+                    sPluRet += "123456789012345";//분류코드      (15)
+                    sPluRet += "3";             //상품구분      (1)      - 1:박스,2:보루,3:낱개
+                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //낱개매가      (8)
+                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //박스매가      (8)
+                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //보루매가      (8)
+                    sPluRet += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인낱개매가  (8)
+                    sPluRet += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인박스매가  (8)
+                    sPluRet += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인보루매가  (8)
+                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대1낱개매가 (8)
+                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대1보루매가 (8)
+                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2낱개매가 (8)
+                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2박스매가 (8)
+                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2보루매가 (8)
+                    sPluRet += "0";                     //행사구분      (1)     - 7:행사구분
+                    sPluRet += "1";                     //할인가능여부  (1)     - 0:할인가능,1:할인불가
+                    sPluRet += dicRet["sTaxSep"].PadLeft(1, '0');       //과세구분      (1)     - 0:과세,1:면세,2:영세
+                    sPluRet += "0003";                  //박스입수      (4)
+                    sPluRet += "2";                     //포인트적립가능구분 (1)- 1:적립가능,2:적립불가
+                    sPluRet += "000";                   //예비          (3)
+                    sPluRet += dicRet["sMlinkPlu"].PadLeft(13, '0');     //연결코드      (13)    - 첫자리,0:일반,1:공병,2:쇼핑백,3:P박스
+                    sPluRet += dicRet["sPluNameOrd"].PadLeft(30, '0');   //상품명        (30)
+                    sPluRet += dicRet["sPluSep"].PadLeft(1, '0');       //PLU구분       (1)     - 1:직영,2:특정
                 }
-                sRet += sPluRsp;
+                sRet += sPluRet;
             }
             catch (Exception ex)
             {
@@ -503,6 +503,8 @@ namespace PosServer
             String sPosNo = null;       //포스번호
             String sTranNo = null;      //거래번호
 
+            /* Tran Log Result */
+            String sTranRet = null;  // plu 결과
 
             try
             {
@@ -511,6 +513,49 @@ namespace PosServer
                 sInqData = sMsg.Substring(86);           //Inq Data
 
                 dicRet = clsMain.SearchTran(sStoreNo, sSaleDate, sPosNo, sTranNo);
+
+                if(dicRet != null)
+                {
+                    sTranRet += dicRet["sStroeNo"].PadLeft(4, '0'); //점포코드          (4)
+                    sTranRet += dicRet["sSaleDate"].PadLeft(4, '0');//영업일(8)
+                    sTranRet += dicRet["sPosNo"].PadLeft(4, '0');//POS번호(4)
+                    sTranRet += dicRet["sTranNo"].PadLeft(4, '0');//거래번호(4)
+                    sTranRet += dicRet["sSysDate"].PadLeft(4, '0');//시스템일자(8)
+                    sTranRet += dicRet["sSaleTime"].PadLeft(4, '0');//시스템시간(6)
+                    sTranRet += dicRet["sTrData"].PadLeft(4, '0');//거래데이터(TEXT)
+                    sTranRet += dicRet["sTranType"].PadLeft(4, '0');//거래구분(2)
+                    sTranRet += dicRet["sTranKind"].PadLeft(4, '0');//거래종류(2)
+                    sTranRet += dicRet["sCashierNo"].PadLeft(4, '0');//캐셔번호(6)
+                    sTranRet += dicRet["sOrgSaleDate"].PadLeft(4, '0');//원 거래일자(8)
+                    sTranRet += dicRet["sOrgPosNo"].PadLeft(4, '0');//원 POS번호(4)
+                    sTranRet += dicRet["sOrgTranNo"].PadLeft(4, '0');//원 거래번호(4)
+                    sTranRet += dicRet["sOrgCashierNo"].PadLeft(4, '0');//원 캐셔번호(6)
+                    sTranRet += dicRet["sItemCnt"].PadLeft(4, '0');//아이템건수(9)
+                    sTranRet += dicRet["sTotAmt"].PadLeft(4, '0');//총거래금액(9)
+                    sTranRet += dicRet["sDisAmt"].PadLeft(4, '0');//총할인금액(9)
+                    sTranRet += dicRet["sCutAmt"].PadLeft(4, '0');//총에누리금액(9)
+                    sTranRet += dicRet["sCashAmt"].PadLeft(4, '0');//현금금액(9)
+                    sTranRet += dicRet["sCardAmt"].PadLeft(4, '0');//신용카드금액(9)
+                    sTranRet += dicRet["sCpnAmt"].PadLeft(4, '0');//쿠폰금액(9)
+                    sTranRet += dicRet["sGiftAmt"].PadLeft(4, '0');//상품권금액(9)
+                    sTranRet += dicRet["sCashFlag"].PadLeft(4, '0');//현금 FLAG(1)
+                    sTranRet += dicRet["sGcFlag"].PadLeft(4, '0');//상품권 FLAG(1)
+                    sTranRet += dicRet["sPpFlag"].PadLeft(4, '0');//PP FLAG(1)
+                    sTranRet += dicRet["sCouponFlag"].PadLeft(4, '0');//쿠폰 FLAG(1)
+                    sTranRet += dicRet["sCardFlag"].PadLeft(4, '0');//신용카드 FLAG(1)
+                    sTranRet += dicRet["sDbFlag"].PadLeft(4, '0');//직불카드 FLAG(1)
+                    sTranRet += dicRet["sPointFlag"].PadLeft(4, '0');//포인트 FLAG(1)
+                    sTranRet += dicRet["sHalbuFlag"].PadLeft(4, '0');//신용카드 할부 FLAG(1)
+                    sTranRet += dicRet["sRetFlag"].PadLeft(4, '0');//반품처리 FLAG(1)
+                    sTranRet += dicRet["sCustSex"].PadLeft(4, '0');//고객성별(1)
+                    sTranRet += dicRet["sCustAge"].PadLeft(4, '0');//고객층(1)
+                    sTranRet += dicRet["sUpdFlag"].PadLeft(4, '0');//집계 FLAG(1)
+                    sTranRet += dicRet["sUpdDate"].PadLeft(4, '0');//집계일자(8)
+                    sTranRet += dicRet["sSndFlag"].PadLeft(4, '0');//송신 FLAG(1)
+                    sTranRet += dicRet["sSndDate"].PadLeft(4, '0');//송신일자(8)
+                }
+
+
             }
             catch (Exception ex)
             {
