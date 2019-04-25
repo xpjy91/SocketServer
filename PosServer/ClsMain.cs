@@ -320,7 +320,7 @@ namespace PosServer
                               ",TRAN_KIND           AS sTranKind " +
                               ",CASHIER_NO          AS sCashierNo " +
                               ",ORG_SALE_DATE       AS sOrgSaleDate " +
-                              " ORG_POS_NO          AS sOrgPosNo " +
+                              ",ORG_POS_NO          AS sOrgPosNo " +
                               ",ORG_TRAN_NO         AS sOrgTranNo " +
                               ",ORG_CASHIER_NO      AS sOrgCashierNo " +
                               ",ITEM_CNT            AS sItemCnt " +
