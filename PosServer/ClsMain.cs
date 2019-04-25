@@ -309,7 +309,7 @@ namespace PosServer
 
             try
             {
-                sQuery = "SELECT STORE_NO           AS sStroeNo " +
+                sQuery = "SELECT STORE_NO           AS sStoreNo " +
                               ",SALE_DATE           AS sSaleDate " +
                               ",POS_NO              AS sPosNo " +
                               ",TRAN_NO             AS sTranNo " +
