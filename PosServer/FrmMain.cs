@@ -45,9 +45,9 @@ namespace PosServer
         private Thread listenThread; //Accept()가 블럭
         private Thread recevieThread; //Recevie() 작업
 
-        private void Log(string msg)
+        private void Log(string sMsg)
         {
-            btnLog.Text = (string.Format("[{0}] {1}", DateTime.Now.ToString(), msg));
+            btnLog.Text = (string.Format("[{0}] {1}", DateTime.Now.ToString(), sMsg));
         }
 
         //접속요청
@@ -160,7 +160,7 @@ namespace PosServer
             int iLength = 0;
             try
             {
-                //// 서버 시작하기
+                ///* 쓰레드 사용 */
                 //if (btnSwitch.Text == "시작")
                 //{
                 //    btnSwitch.Text = "멈춤";
@@ -180,7 +180,7 @@ namespace PosServer
 
 
 
-
+                /* 쓰레드 미사용 */
                 if (btnSwitch.Text == "시작")
                 {
                     btnSwitch.Text = "멈춤";
@@ -347,16 +347,30 @@ namespace PosServer
         //운영로그
         private String InquiryOperation(String sMsg)
         {
-            String sRet = sMsg + "NG";
             String sHeader = sMsg.Substring(0, 40);          //헤더데이터 (40)
             String sInqHeader = sMsg.Substring(40, 46);      //INQ헤더 (48)
+            String sRet = sHeader + sInqHeader;              //return msg
             String sInqData = sMsg.Substring(86, 15);        //운영조회INQ (15)
+            String sOperRet = "10";                          //아이템ID  - 10:운영로그
+
             Dictionary<String, String> dicCashier = new Dictionary<string, String>();   //캐셔정보
             DateTime dtNow = DateTime.Now;
             String sDate = dtNow.ToString("yyyyMMdd");       //영업일자
+            String sRspCd = "99";                           //응답코드
             try
             {
                 dicCashier = clsMain.SearchCashier("10000001");
+                if(dicCashier != null)
+                {
+                    sRspCd = "00";                       
+                    sOperRet += sRspCd;                  //응답코드      (2)      - 00:정상, 99:기타에러
+                    sOperRet += sDate;                   //영업일자
+                    sOperRet += dicCashier["sNo"].ToString();       //캐셔번호
+                    sOperRet += dicCashier["sName"].ToString();     //이름
+                    sOperRet += dicCashier["sPass"].ToString();     //비밀번호
+                    sOperRet += dicCashier["sLvl"].ToString();      //레벨
+                }
+                sRet += sOperRet;
             }
             catch (Exception ex)
             {
@@ -543,7 +557,7 @@ namespace PosServer
             clsMain.PrintInqHeader(sInqHeader);
             clsMain.PrintPluInq(sInqData);
 
-            String sPluRet = null;  // plu 결과 Msg
+            String sPluRet = "20";  // plu 결과 Msg
             String sRspCd = "99";   //응답코드 -00:정상, 99:기타에러
             String sRet = sHeader + sInqHeader; //return Msg
 
@@ -589,7 +603,6 @@ namespace PosServer
                  * 
                  */
 
-                sPluRet = "20";     //아이템ID                         - 20
                 if (dicTranLog != null)
                 {
                     sRspCd = "00";
@@ -647,7 +660,8 @@ namespace PosServer
             String sTranNo = null;      //거래번호
 
             /* Tran Log Result */
-            String sTranRet = null;  // plu 결과
+            String sTranRet = "30";  // tranLog 결과 Msg
+            String sRspCd = "99";   //응답코드 -00:정상, 99:기타에러
 
             try
             {
@@ -659,6 +673,8 @@ namespace PosServer
 
                 if(dicRet != null)
                 {
+                    sRspCd = "00";
+                    sTranRet += sRspCd;
                     sTranRet += dicRet["sStroeNo"].PadLeft(4, '0'); //점포코드          (4)
                     sTranRet += dicRet["sSaleDate"].PadLeft(4, '0');//영업일(8)
                     sTranRet += dicRet["sPosNo"].PadLeft(4, '0');//POS번호(4)
