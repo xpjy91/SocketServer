@@ -19,6 +19,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -27,18 +28,101 @@ namespace PosServer
     public partial class FrmMain : Form
     {
 
-        ClsMain clsMain = new ClsMain();
-        //서버 (서버쪽..자신)
-        IPAddress ip = null;
-        IPEndPoint endPoint = null;
-        //Tcp Socket
-        Socket socket = null;
+        private ClsMain clsMain = new ClsMain();
+        //////서버 (서버쪽..자신)
+        private IPAddress ip = null;
+        private IPEndPoint endPoint = null;
+        ////Tcp Socket
+        private Socket serverSocket = null;
         //Client Socket
-        Socket clientSocket = null;
+        private Socket clientSocket = null;
         //수신 버퍼
-        byte[] receiveBuffer = new byte[1024];
+        private byte[] receiveBuffer = new byte[1024];
         //송신 버퍼
-        byte[] sendBuffer = null;
+        private byte[] sendBuffer = null;
+
+
+        private Thread listenThread; //Accept()가 블럭
+        private Thread recevieThread; //Recevie() 작업
+
+        private void Log(string msg)
+        {
+            btnLog.Text = (string.Format("[{0}] {1}", DateTime.Now.ToString(), msg));
+        }
+
+        //접속요청
+        private void Listen()
+        {
+            try
+            {
+                this.Invoke(new Action(delegate ()
+                {
+                    //종단점
+                    ip = IPAddress.Parse("127.0.0.1");
+                    endPoint = new IPEndPoint(ip, 8000);
+
+                    //소켓생성
+                    serverSocket = new Socket(
+                        AddressFamily.InterNetwork,
+                        SocketType.Stream,
+                        ProtocolType.Tcp
+                    );
+
+                    //바인드
+                    serverSocket.Bind(endPoint);
+
+                    //준비
+                    serverSocket.Listen(10);
+
+                    //수신대기
+
+                    // - 여기서 블럭이 걸려야 하지만 스레드로 따로 뺏기때문에 다른 작업이가능
+                    Log("클라이언트 요청 대기중..");
+                    clientSocket = serverSocket.Accept();
+                    Log("클라이언트 접속됨 - " + clientSocket.LocalEndPoint.ToString());
+
+                    //Receive 스레드 호출
+                    recevieThread = new Thread(new ThreadStart(Receive));
+                    recevieThread.IsBackground = true;
+                    recevieThread.Start(); //Receive() 호출
+                }));
+            }
+            catch (Exception ex)
+            {
+                ClsLog.WriteLog(ClsLog.LOG_EXCEPTION, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+        }
+        
+        //수신처리..
+        private void Receive()
+        {
+            try
+            {
+                this.Invoke(new Action(delegate ()
+                {
+                    //연결된 클라이언트가 보낸 데이터 수신
+                    byte[] receiveBuffer = new byte[512];
+                    int iLength = clientSocket.Receive(
+                        receiveBuffer, 
+                        receiveBuffer.Length, 
+                        SocketFlags.None
+                    );
+
+                    //디코딩
+                    String sRevData = Encoding.UTF8.GetString(receiveBuffer, 0, iLength);
+                    Console.WriteLine("받은 데이터 : " + sRevData);
+                    txtInput.Text = sRevData;
+                    ReceiveProcess(sRevData);
+
+                }));
+
+            }
+            catch (Exception ex)
+            {
+                ClsLog.WriteLog(ClsLog.LOG_EXCEPTION, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+            
+        }
 
 
         public FrmMain()
@@ -76,37 +160,73 @@ namespace PosServer
             int iLength = 0;
             try
             {
-                //1.종단점 생성(서버쪽..자신)
-                ip = IPAddress.Parse("192.168.1.161");
-                endPoint = new IPEndPoint(ip, 8000);
+                //// 서버 시작하기
+                //if (btnSwitch.Text == "시작")
+                //{
+                //    btnSwitch.Text = "멈춤";
+                //    Log("서버 시작됨");
+                //    //Listen스레드 처리
+                //    listenThread = new Thread(new ThreadStart(Listen));
+                //    listenThread.IsBackground = true;
+                //    listenThread.Start();
+                //}
+                //else
+                //{
+                //    btnSwitch.Text = "시작";
+                //    Log("서버 멈춤");
+                //    if (clientSocket != null) clientSocket.Close();
+                //    if (serverSocket != null) serverSocket.Close();
+                //}
 
-                //2. Tcp Socket 생성
-                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                //3. 바인드
-                socket.Bind(endPoint);
 
-                //4. 대기 큐 설정
-                socket.Listen(10);
 
-                //5. 연결 대기 -> 접속 후 소켓 생성
-                clientSocket = socket.Accept();
+                if (btnSwitch.Text == "시작")
+                {
+                    btnSwitch.Text = "멈춤";
+                    Log("서버 시작됨");
 
-                //6. 수신 버퍼 생성
-                receiveBuffer = new byte[1024];
+                    for (int i = 0; i < 3; i++)
+                    {
+                        //1.종단점 생성(서버쪽..자신)
+                        ip = IPAddress.Parse("127.0.0.1");
+                        endPoint = new IPEndPoint(ip, 8000);
 
-                //7. 데이터 받기
-                iLength = clientSocket.Receive(receiveBuffer, receiveBuffer.Length, SocketFlags.None);
+                        //2. Tcp Socket 생성
+                        serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                //8. 디코딩&출력&서비스처리
-                sRevData = Encoding.UTF8.GetString(receiveBuffer, 0, iLength);
-                Console.WriteLine("받은 데이터 : " + sRevData);
-                txtInput.Text = sRevData;
-                ReceiveProcess(sRevData);
+                        //3. 바인드
+                        serverSocket.Bind(endPoint);
 
-                //9. 마무리
-                clientSocket.Close();
-                socket.Close();
+                        //4. 대기 큐 설정
+                        serverSocket.Listen(10);
+
+                        //5. 연결 대기 -> 접속 후 소켓 생성
+                        clientSocket = serverSocket.Accept();
+
+                        //6. 수신 버퍼 생성
+                        receiveBuffer = new byte[1024];
+
+                        //7. 데이터 받기
+                        iLength = clientSocket.Receive(receiveBuffer, receiveBuffer.Length, SocketFlags.None);
+
+                        //8. 디코딩&출력&서비스처리
+                        sRevData = Encoding.UTF8.GetString(receiveBuffer, 0, iLength);
+                        Console.WriteLine("받은 데이터 : " + sRevData);
+                        txtInput.Text = sRevData;
+                        ReceiveProcess(sRevData);
+
+                        //9. 마무리
+                        clientSocket.Close();
+                        serverSocket.Close();
+                    }
+                }
+                else
+                {
+                    btnSwitch.Text = "시작";
+                    Log("서버 멈춤");
+                }
+
 
             }
             catch (Exception ex)
@@ -180,13 +300,13 @@ namespace PosServer
                 sGubun = sMsg.Substring(86, 2);
                 switch (sGubun)
                 {
+                    case "10" :
+                        /* 운영로그 */
+                        sRet = InquiryOperation(sMsg);
+                        break;
                     case "20" :
                         /* PLU조회 */
                         sRet = InquiryPlu(sMsg);
-                        break;
-                    case "?1" :
-                        /* 운영로그 */
-
                         break;
                     case "?2" :
                         /* 거래로그 */
@@ -204,6 +324,7 @@ namespace PosServer
             return sRet;
         }
 
+        //더미통신
         private String InquiryDummy(String sMsg)
         {
             String sRet = sMsg + "NG";
@@ -223,6 +344,28 @@ namespace PosServer
             return sRet;
         }
 
+        //운영로그
+        private String InquiryOperation(String sMsg)
+        {
+            String sRet = sMsg + "NG";
+            String sHeader = sMsg.Substring(0, 40);          //헤더데이터 (40)
+            String sInqHeader = sMsg.Substring(40, 46);      //INQ헤더 (48)
+            String sInqData = sMsg.Substring(86, 15);        //운영조회INQ (15)
+            Dictionary<String, String> dicCashier = new Dictionary<string, String>();   //캐셔정보
+            DateTime dtNow = DateTime.Now;
+            String sDate = dtNow.ToString("yyyyMMdd");       //영업일자
+            try
+            {
+                dicCashier = clsMain.SearchCashier("10000001");
+            }
+            catch (Exception ex)
+            {
+                ClsLog.WriteLog(ClsLog.LOG_EXCEPTION, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+            return sRet;
+        }
+
+        //거래로그저장
         private String SaveTran(String sMsg)
         {
             Dictionary<String, Object> dicCommand = new Dictionary<string, Object>();
@@ -363,8 +506,8 @@ namespace PosServer
 
         public String InquiryPlu(String sMsg)
         {
-            Dictionary<String, String> dicCommand = new Dictionary<string, String>();   // 조회 커맨드
-            Dictionary<String, String> dicRet = new Dictionary<string, String>();       // 조회결과
+            Dictionary<String, String> dicCommand = new Dictionary<string, String>();   // 조회커맨드
+            Dictionary<String, String> dicTranLog = new Dictionary<string, String>();       // 조회결과
 
             /**
               *                      통신헤더
@@ -409,8 +552,8 @@ namespace PosServer
             String sPluNo = sInqData.Substring(2, 13);   //상품번호
             try
             {
-                
-                dicRet = clsMain.SearchMst(sStoreNo, sPluNo);
+
+                dicTranLog = clsMain.SearchMst(sStoreNo, sPluNo);
                 /**
                  * PLU 조회 응답데이터
                  * 
@@ -447,36 +590,36 @@ namespace PosServer
                  */
 
                 sPluRet = "20";     //아이템ID                         - 20
-                if (dicRet != null)
+                if (dicTranLog != null)
                 {
                     sRspCd = "00";
                     sPluRet += sRspCd;                  //응답코드      (2)      - 00:정상, 99:기타에러
-                    sPluRet += dicRet["sPluNo"].PadLeft(13,'0');        //상품코드      (13)
-                    sPluRet += dicRet["sStoreNo"].PadLeft(4, '0');      //점포코드      (4)
+                    sPluRet += dicTranLog["sPluNo"].PadLeft(13,'0');        //상품코드      (13)
+                    sPluRet += dicTranLog["sStoreNo"].PadLeft(4, '0');      //점포코드      (4)
                     sPluRet += "8888";          //거래처코드    (4)
-                    sPluRet += dicRet["sPluNo"].PadLeft(13, '0');        //본부코드      (13)
+                    sPluRet += dicTranLog["sPluNo"].PadLeft(13, '0');        //본부코드      (13)
                     sPluRet += "123456789012345";//분류코드      (15)
                     sPluRet += "3";             //상품구분      (1)      - 1:박스,2:보루,3:낱개
-                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //낱개매가      (8)
-                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //박스매가      (8)
-                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //보루매가      (8)
-                    sPluRet += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인낱개매가  (8)
-                    sPluRet += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인박스매가  (8)
-                    sPluRet += dicRet["sMaegaUnitSale"].PadLeft(8, '0');//할인보루매가  (8)
-                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대1낱개매가 (8)
-                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대1보루매가 (8)
-                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2낱개매가 (8)
-                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2박스매가 (8)
-                    sPluRet += dicRet["sMaegaUnit"].PadLeft(8, '0');    //우대2보루매가 (8)
+                    sPluRet += dicTranLog["sMaegaUnit"].PadLeft(8, '0');    //낱개매가      (8)
+                    sPluRet += dicTranLog["sMaegaUnit"].PadLeft(8, '0');    //박스매가      (8)
+                    sPluRet += dicTranLog["sMaegaUnit"].PadLeft(8, '0');    //보루매가      (8)
+                    sPluRet += dicTranLog["sMaegaUnitSale"].PadLeft(8, '0');//할인낱개매가  (8)
+                    sPluRet += dicTranLog["sMaegaUnitSale"].PadLeft(8, '0');//할인박스매가  (8)
+                    sPluRet += dicTranLog["sMaegaUnitSale"].PadLeft(8, '0');//할인보루매가  (8)
+                    sPluRet += dicTranLog["sMaegaUnit"].PadLeft(8, '0');    //우대1낱개매가 (8)
+                    sPluRet += dicTranLog["sMaegaUnit"].PadLeft(8, '0');    //우대1보루매가 (8)
+                    sPluRet += dicTranLog["sMaegaUnit"].PadLeft(8, '0');    //우대2낱개매가 (8)
+                    sPluRet += dicTranLog["sMaegaUnit"].PadLeft(8, '0');    //우대2박스매가 (8)
+                    sPluRet += dicTranLog["sMaegaUnit"].PadLeft(8, '0');    //우대2보루매가 (8)
                     sPluRet += "0";                     //행사구분      (1)     - 7:행사구분
                     sPluRet += "1";                     //할인가능여부  (1)     - 0:할인가능,1:할인불가
-                    sPluRet += dicRet["sTaxSep"].PadLeft(1, '0');       //과세구분      (1)     - 0:과세,1:면세,2:영세
+                    sPluRet += dicTranLog["sTaxSep"].PadLeft(1, '0');       //과세구분      (1)     - 0:과세,1:면세,2:영세
                     sPluRet += "0003";                  //박스입수      (4)
                     sPluRet += "2";                     //포인트적립가능구분 (1)- 1:적립가능,2:적립불가
                     sPluRet += "000";                   //예비          (3)
-                    sPluRet += dicRet["sMlinkPlu"].PadLeft(13, '0');     //연결코드      (13)    - 첫자리,0:일반,1:공병,2:쇼핑백,3:P박스
-                    sPluRet += dicRet["sPluNameOrd"].PadLeft(30, '0');   //상품명        (30)
-                    sPluRet += dicRet["sPluSep"].PadLeft(1, '0');       //PLU구분       (1)     - 1:직영,2:특정
+                    sPluRet += dicTranLog["sMlinkPlu"].PadLeft(13, '0');     //연결코드      (13)    - 첫자리,0:일반,1:공병,2:쇼핑백,3:P박스
+                    sPluRet += dicTranLog["sPluNameOrd"].PadLeft(30, '0');   //상품명        (30)
+                    sPluRet += dicTranLog["sPluSep"].PadLeft(1, '0');       //PLU구분       (1)     - 1:직영,2:특정
                 }
                 sRet += sPluRet;
             }

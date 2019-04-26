@@ -410,6 +410,46 @@ namespace PosServer
             return dicTranLog;
         }
 
+        public Dictionary<string, string>  SearchCashier(String sCashierNo)
+        {
+            SqlDataReader sqlRead = null;
+            Dictionary<string, string> dicCashier = null;
+            string sQuery = null;
+
+            try
+            {
+                sQuery = "SELECT EMP_NO AS sNo, " +
+                                "EMP_NAME AS sName, " +
+                                "EMP_PASS AS sPass, " +
+                                "EMP_LVL AS sLvl " +
+                        " FROM EMPMST " +
+                        " WHERE EMP_NO = '" + sCashierNo + "'";
+                sqlRead = clsDb.GetData(sQuery);
+
+                while (sqlRead.Read() == true)
+                {
+                    dicCashier = new Dictionary<string, string>();
+                    dicCashier["sNo"] = sqlRead["sNo"].ToString();
+                    dicCashier["sName"] = sqlRead["sName"].ToString();
+                    dicCashier["sPass"] = sqlRead["sPass"].ToString();
+                    dicCashier["sLvl"] = sqlRead["sLvl"].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                ClsLog.WriteLog(ClsLog.LOG_EXCEPTION, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+            finally
+            {
+                if (sqlRead.IsClosed != true)
+                {
+                    sqlRead.Close();
+                }
+            }
+
+            return dicCashier;
+        }
+
         public String SearchMaxTranNo()
         {
             SqlDataReader sqlRead = null;

@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnLog = new System.Windows.Forms.Button();
             this.btnSwitch = new System.Windows.Forms.Button();
             this.txtInput = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // button1
+            // btnLog
             // 
-            this.button1.Location = new System.Drawing.Point(307, 116);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(209, 87);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "DB 연결 TEST";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnLog.Location = new System.Drawing.Point(307, 116);
+            this.btnLog.Name = "btnLog";
+            this.btnLog.Size = new System.Drawing.Size(209, 87);
+            this.btnLog.TabIndex = 0;
+            this.btnLog.Text = "연결 안됨";
+            this.btnLog.UseVisualStyleBackColor = true;
+            this.btnLog.Click += new System.EventHandler(this.button1_Click);
             // 
             // btnSwitch
             // 
@@ -50,7 +50,7 @@
             this.btnSwitch.Name = "btnSwitch";
             this.btnSwitch.Size = new System.Drawing.Size(209, 87);
             this.btnSwitch.TabIndex = 1;
-            this.btnSwitch.Text = "서버 ON";
+            this.btnSwitch.Text = "시작";
             this.btnSwitch.UseVisualStyleBackColor = true;
             this.btnSwitch.Click += new System.EventHandler(this.btnSwitch_Click);
             // 
@@ -83,7 +83,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtInput);
             this.Controls.Add(this.btnSwitch);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnLog);
             this.Name = "FrmMain";
             this.Text = "Server";
             this.Load += new System.EventHandler(this.FrmMain_Load);
@@ -94,7 +94,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnLog;
         private System.Windows.Forms.Button btnSwitch;
         public System.Windows.Forms.TextBox txtInput;
         private System.Windows.Forms.Label label2;
