@@ -29,7 +29,7 @@ namespace PosServer
     {
 
         private ClsMain clsMain = new ClsMain();
-        //////서버 (서버쪽..자신)
+        //서버
         private IPAddress ip = null;
         private IPEndPoint endPoint = null;
         ////Tcp Socket
@@ -42,8 +42,8 @@ namespace PosServer
         private byte[] sendBuffer = null;
 
 
-        private Thread listenThread; //Accept()가 블럭
-        private Thread recevieThread; //Recevie() 작업
+        private Thread listenThread;    //Accept()
+        private Thread recevieThread;   //Recevie()
 
         private void Log(string sMsg)
         {
