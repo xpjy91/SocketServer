@@ -75,7 +75,6 @@ namespace PosServer
                     serverSocket.Listen(10);
 
                     //수신대기
-
                     // - 여기서 블럭이 걸려야 하지만 스레드로 따로 뺏기때문에 다른 작업이가능
                     Log("클라이언트 요청 대기중..");
                     clientSocket = serverSocket.Accept();
@@ -308,7 +307,7 @@ namespace PosServer
                         /* PLU조회 */
                         sRet = InquiryPlu(sMsg);
                         break;
-                    case "?2" :
+                    case "30" :
                         /* 거래로그 */
                         sRet = InquiryTran(sMsg);
                         break;
@@ -350,7 +349,7 @@ namespace PosServer
             String sHeader = sMsg.Substring(0, 40);          //헤더데이터 (40)
             String sInqHeader = sMsg.Substring(40, 46);      //INQ헤더 (48)
             String sRet = sHeader + sInqHeader;              //return msg
-            String sInqData = sMsg.Substring(86, 15);        //운영조회INQ (15)
+            String sInqData = sMsg.Substring(86);        //운영조회INQ (15)
             String sOperRet = "10";                          //아이템ID  - 10:운영로그
 
             Dictionary<String, String> dicCashier = new Dictionary<string, String>();   //캐셔정보
@@ -651,7 +650,7 @@ namespace PosServer
             String sHeader = null;         //헤더데이터 (40)
             String sInqHeader = null;      //INQ헤더 (48)
             String sInqData = null;        //Inq Data (15)
-            String sRet = null;
+            String sRet = sHeader + sInqHeader; //결과 Ret
 
             /* TRAN LOG COMMAND */
             String sStoreNo = null;     //점포코드
@@ -714,7 +713,7 @@ namespace PosServer
                     sTranRet += dicRet["sSndDate"].PadLeft(4, '0');//송신일자(8)
                 }
 
-
+                sRet += sTranRet;
             }
             catch (Exception ex)
             {
