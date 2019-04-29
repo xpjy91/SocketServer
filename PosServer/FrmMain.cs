@@ -109,7 +109,10 @@ namespace PosServer
 
                     //디코딩
                     String sRevData = Encoding.UTF8.GetString(receiveBuffer, 0, iLength);
+                    Console.WriteLine("====================================================");
                     Console.WriteLine("받은 데이터 : " + sRevData);
+                    Console.WriteLine("====================================================");
+
                     txtInput.Text = sRevData;
                     ReceiveProcess(sRevData);
 
@@ -240,6 +243,7 @@ namespace PosServer
             {
                 Console.WriteLine("====================================================");
                 Console.WriteLine("보낼 데이터 : " + sData);
+                Console.WriteLine("====================================================");
                 // 데이터
                 sendBuffer = Encoding.UTF8.GetBytes(sData);//전송할 데이터를 인코딩,,인자값 : 전송할 데이터
                 // 전송
@@ -370,6 +374,7 @@ namespace PosServer
                     sOperRet += dicCashier["sName"].ToString();     //이름
                     sOperRet += dicCashier["sPass"].ToString();     //비밀번호
                     sOperRet += dicCashier["sLvl"].ToString();      //레벨
+                    clsMain.PrintOperation(dicCashier);
                 }
                 sRet += sOperRet;
             }
@@ -676,13 +681,13 @@ namespace PosServer
                 {
                     sRspCd = "00";
                     sTranRet += sRspCd;
-                    sTranRet += dicRet["sStroeNo"].PadLeft(4, '0'); //점포코드          (4)
+                    sTranRet += dicRet["sStroeNo"].PadLeft(4, '0'); //점포코드(4)
                     sTranRet += dicRet["sSaleDate"].PadLeft(4, '0');//영업일(8)
                     sTranRet += dicRet["sPosNo"].PadLeft(4, '0');//POS번호(4)
                     sTranRet += dicRet["sTranNo"].PadLeft(4, '0');//거래번호(4)
                     sTranRet += dicRet["sSysDate"].PadLeft(4, '0');//시스템일자(8)
                     sTranRet += dicRet["sSaleTime"].PadLeft(4, '0');//시스템시간(6)
-                    sTranRet += dicRet["sTrData"].PadLeft(4, '0');//거래데이터(TEXT)
+                    sTranRet += dicRet["sTrData"];//거래데이터(TEXT)
                     sTranRet += dicRet["sTranType"].PadLeft(4, '0');//거래구분(2)
                     sTranRet += dicRet["sTranKind"].PadLeft(4, '0');//거래종류(2)
                     sTranRet += dicRet["sCashierNo"].PadLeft(4, '0');//캐셔번호(6)

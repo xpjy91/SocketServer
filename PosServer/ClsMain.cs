@@ -393,6 +393,8 @@ namespace PosServer
                     dicTranLog["sUpdDate"] = sqlRead["sUpdDate"].ToString();
                     dicTranLog["sSndFlag"] = sqlRead["sSndFlag"].ToString();
                     dicTranLog["sSndDate"] = sqlRead["sSndDate"].ToString();
+
+                    PrintTranLog(dicTranLog);
                 }
             }
             catch (Exception ex)
@@ -1079,6 +1081,77 @@ namespace PosServer
                 Console.WriteLine("변경일자(sChgDate) =============> [" + dicRet["sChgDate"] + "]");
                 Console.WriteLine("변경사번(sChgEmpNo) =============> [" + dicRet["sChgEmpNo"] + "]");
                 Console.WriteLine("==================== PLU조회 데이터 ====================");
+            }
+            catch (Exception ex)
+            {
+                ClsLog.WriteLog(ClsLog.LOG_EXCEPTION, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+        }
+
+        public void PrintTranLog(Dictionary<string, string> dicTranLog)
+        {
+            try
+            {
+                Console.WriteLine("=============== 거래로그 데이터 조회 ==================");
+
+                Console.WriteLine("점포코드(sStoreNo) =============>" + dicTranLog["sStoreNo"]);
+                Console.WriteLine("영업일(sSaleDate) =============>" + dicTranLog["sSaleDate"]);
+                Console.WriteLine("POS번호(sPosNo) =============>" + dicTranLog["sPosNo"]);
+                Console.WriteLine("거래번호(sTranNo) =============>" + dicTranLog["sTranNo"]);
+                Console.WriteLine("시스템일자(sSysDate) =============>" + dicTranLog["sSysDate"]);
+                Console.WriteLine("시스템시간(sSaleTime) =============>" + dicTranLog["sSaleTime"]);
+                Console.WriteLine("거래데이터(sTrData) =============>" + dicTranLog["sTrData"]);
+                Console.WriteLine("거래구분(sTranType) =============>" + dicTranLog["sTranType"]);
+                Console.WriteLine("거래종류(sTranKind) =============>" + dicTranLog["sTranKind"]);
+                Console.WriteLine("캐셔번호(sCashierNo) =============>" + dicTranLog["sCashierNo"]);
+                Console.WriteLine("원 거래일자(sOrgSaleDate) =============>" + dicTranLog["sOrgSaleDate"]);
+                Console.WriteLine("원 POS번호(sOrgPosNo) =============>" + dicTranLog["sOrgPosNo"]);
+                Console.WriteLine("원 거래번호(sOrgTranNo) =============>" + dicTranLog["sOrgTranNo"]);
+                Console.WriteLine("원 캐셔번호(sOrgCashierNo) =============>" + dicTranLog["sOrgCashierNo"]);
+                Console.WriteLine("아이템건수(sItemCnt) =============>" + dicTranLog["sItemCnt"]);
+                Console.WriteLine("총거래금액(sTotAmt) =============>" + dicTranLog["sTotAmt"]);
+                Console.WriteLine("총할인금액(sDisAmt) =============>" + dicTranLog["sDisAmt"]);
+                Console.WriteLine("총에누리금액(sCutAmt) =============>" + dicTranLog["sCutAmt"]);
+                Console.WriteLine("현금금액(sCashAmt) =============>" + dicTranLog["sCashAmt"]);
+                Console.WriteLine("신용카드금액(sCardAmt) =============>" + dicTranLog["sCardAmt"]);
+                Console.WriteLine("쿠폰금액(sCpnAmt) =============>" + dicTranLog["sCpnAmt"]);
+                Console.WriteLine("상품권금액(sGiftAmt) =============>" + dicTranLog["sGiftAmt"]);
+                Console.WriteLine("현금 FLAG(sCashFlag) =============>" + dicTranLog["sCashFlag"]);
+                Console.WriteLine("상품권 FLAG(sGcFlag) =============>" + dicTranLog["sGcFlag"]);
+                Console.WriteLine("PP FLAG(sPpFlag) =============>" + dicTranLog["sPpFlag"]);
+                Console.WriteLine("쿠폰 FLAG(sCouponFlag) =============>" + dicTranLog["sCouponFlag"]);
+                Console.WriteLine("신용카드 FLAG(sCardFlag) =============>" + dicTranLog["sCardFlag"]);
+                Console.WriteLine("직불카드 FLAG(sDbFlag) =============>" + dicTranLog["sDbFlag"]);
+                Console.WriteLine("포인트 FLAG(sPointFlag) =============>" + dicTranLog["sPointFlag"]);
+                Console.WriteLine("신용카드 할부 FLAG(sHalbuFlag) =============>" + dicTranLog["sHalbuFlag"]);
+                Console.WriteLine("반품처리 FLAG(sRetFlag) =============>" + dicTranLog["sRetFlag"]);
+                Console.WriteLine("고객성별(sCustSex) =============>" + dicTranLog["sCustSex"]);
+                Console.WriteLine("고객층(sCustAge) =============>" + dicTranLog["sCustAge"]);
+                Console.WriteLine("집계 FLAG(sUpdFlag) =============>" + dicTranLog["sUpdFlag"]);
+                Console.WriteLine("집계일자(sUpdDate) =============>" + dicTranLog["sUpdDate"]);
+                Console.WriteLine("송신 FLAG(sSndFlag) =============>" + dicTranLog["sSndFlag"]);
+                Console.WriteLine("송신일자(sSndDate) =============>" + dicTranLog["sSndDate"]);
+                Console.WriteLine("======================================================");
+            }
+            catch (Exception ex)
+            {
+                ClsLog.WriteLog(ClsLog.LOG_EXCEPTION, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+        }
+
+        public void PrintOperation(Dictionary<String,String> dicCashier)
+        {
+            try
+            {
+                DateTime dtNow = DateTime.Now;
+                String sDate = dtNow.ToString("yyyyMMdd");       //영업일자
+                Console.WriteLine("=============== 운영로그 데이터조회 ==================");
+                Console.WriteLine("영업일자 =============>" + sDate);
+                Console.WriteLine("캐셔번호(sNo) =============>" + dicCashier["sNo"]);
+                Console.WriteLine("이름(sName) =============>" + dicCashier["sName"]);
+                Console.WriteLine("비밀번호(sPass) =============>" + dicCashier["sPass"]);
+                Console.WriteLine("비밀번호(sSndFlag) =============>" + dicCashier["sLvl"]);
+                Console.WriteLine("=============== 운영로그 데이터조회 ==================");
             }
             catch (Exception ex)
             {
