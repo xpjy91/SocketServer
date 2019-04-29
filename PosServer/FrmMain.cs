@@ -671,6 +671,12 @@ namespace PosServer
 
             try
             {
+                /* 임시 */
+                sStoreNo = "0001";
+                sSaleDate = "20190426";
+                sPosNo = "0001";
+                sTranNo = "0001";
+
                 sHeader = sMsg.Substring(0, 40);          //헤더데이터 (40)   
                 sInqHeader = sMsg.Substring(40, 46);      //INQ헤더 (48)
                 sInqData = sMsg.Substring(86);           //Inq Data
@@ -681,7 +687,7 @@ namespace PosServer
                 {
                     sRspCd = "00";
                     sTranRet += sRspCd;
-                    sTranRet += dicRet["sStroeNo"].PadLeft(4, '0'); //점포코드(4)
+                    sTranRet += dicRet["sStoreNo"].PadLeft(4, '0'); //점포코드(4)
                     sTranRet += dicRet["sSaleDate"].PadLeft(4, '0');//영업일(8)
                     sTranRet += dicRet["sPosNo"].PadLeft(4, '0');//POS번호(4)
                     sTranRet += dicRet["sTranNo"].PadLeft(4, '0');//거래번호(4)
