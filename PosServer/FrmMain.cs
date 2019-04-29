@@ -238,6 +238,8 @@ namespace PosServer
         {
             try
             {
+                Console.WriteLine("====================================================");
+                Console.WriteLine("보낼 데이터 : " + sData);
                 // 데이터
                 sendBuffer = Encoding.UTF8.GetBytes(sData);//전송할 데이터를 인코딩,,인자값 : 전송할 데이터
                 // 전송
