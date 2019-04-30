@@ -509,7 +509,7 @@ namespace PosServer
         public void PrintHeader(String sMsg)
         {
 
-            String sMsgLength = sMsg.Substring(0, 6);          //전문길이
+            String sMsgLength = sMsg.Substring(0, 6);       //전문길이
             String sPath = sMsg.Substring(6, 2);            //전문경로
             String sType = sMsg.Substring(8, 2);            //전문구분
             String sKind = sMsg.Substring(10, 2);           //전문종별
@@ -671,12 +671,12 @@ namespace PosServer
         public void PrintPayList(String sMsg)
         {
             String[] sList = sMsg.Split('|');
-            String sGubun = ""; //지불방법 (2) - 현금:11,쿠폰:10,상품권:12,신용카드:15
+            String sGubun = "";             //지불방법 (2) - 현금:11,쿠폰:10,상품권:12,신용카드:15
             String sItemId = null;          //아이템ID
             String sItemLen = null;         //아이템길이
             String sBagAmt = null;          //공병/쇼핑백금액
-            String sQty = null;         //매수
-            String sAmt = null;         //금액
+            String sQty = null;             //매수
+            String sAmt = null;             //금액
 
             /*카드*/
             String sTranType = null;        //거래구분
@@ -706,22 +706,22 @@ namespace PosServer
             String sChange = null;          //거스름
 
             /*쿠폰*/
-            String sCpnType = null;     //쿠폰 구분 (1) - 1:자사,2:타사,3:타사2,4:타사3,5:타사4
-            String sCpnCode = null;     //쿠폰 코드
-            String sCpnQty = null;      //쿠폰 수량
-            String sCpnAmt = null;      //쿠폰 금액
-            String sCustNo = null;      //고객 코드
-            String sPluNo = null;       //단품 코드
+            String sCpnType = null;         //쿠폰 구분 (1) - 1:자사,2:타사,3:타사2,4:타사3,5:타사4
+            String sCpnCode = null;         //쿠폰 코드
+            String sCpnQty = null;          //쿠폰 수량
+            String sCpnAmt = null;          //쿠폰 금액
+            String sCustNo = null;          //고객 코드
+            String sPluNo = null;           //단품 코드
             
             /*상품권*/
-            String sGcId = null;        //상품권 구분
-            String sGcNo = null;        //상품권 번호
-            String sCashChange = null;  //현금거스름
-            String sStatus = null;      //상품권 조회상태
+            String sGcId = null;            //상품권 구분
+            String sGcNo = null;            //상품권 번호
+            String sCashChange = null;      //현금거스름
+            String sStatus = null;          //상품권 조회상태
 
             /*마감입금*/
-            String sCloseId = null;     //정산ID
-            String sCode = null;        //코드
+            String sCloseId = null;         //정산ID
+            String sCode = null;            //코드
 
             try
             {
@@ -743,7 +743,7 @@ namespace PosServer
                              *      
                              **/
 
-                            sItemId = sData.Substring(0, 2);      //아이템ID
+                            sItemId = sData.Substring(0, 2);     //아이템ID
                             sItemLen = sData.Substring(2, 3);    //아이템길이
                             sCashAmt = sData.Substring(5, 9);    //현금금액
                             sChange = sData.Substring(14, 8);    //거스름
@@ -782,7 +782,7 @@ namespace PosServer
                             /**
                             *                       CASH_ITEM
                             *                 상품권 ITEM ( 49 Byte )
-                            *      아이템ID (2)
+                            *      아이템ID (2)   - 12
                             *      아이템길이 (3)
                             *      상품권구분 (2) - 01:자사상품권,02...05:타사상품권
                             *      상품권번호 (13)
@@ -905,7 +905,7 @@ namespace PosServer
                             /**
                              *                       CASH_ITEM
                              *                 마감입금 ITEM ( 29 Byte )
-                             *      아이템ID (2)
+                             *      아이템ID (2)   - 99
                              *      아이템길이 (3)
                              *      정산ID (4)
                              *      코드 (4)
@@ -1196,7 +1196,6 @@ namespace PosServer
             try
             {
                 Console.WriteLine("=============== 거래로그 데이터 조회 ==================");
-
                 Console.WriteLine("점포코드(sStoreNo) =============>" + dicTranLog["sStoreNo"]);
                 Console.WriteLine("영업일(sSaleDate) =============>" + dicTranLog["sSaleDate"]);
                 Console.WriteLine("POS번호(sPosNo) =============>" + dicTranLog["sPosNo"]);
