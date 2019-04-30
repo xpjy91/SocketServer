@@ -464,14 +464,7 @@ namespace PosServer
                 clsMain.PrintItemList(sItemData);
                 itemList = sItemData.Split('|');
 
-                //지불 데이터
-                //아이템ID (2) - 현금:11,쿠폰:10,상품권:12,신용카드:15
-                sPayData = sMsg.Substring((sMsg.IndexOf("PAY") + 3), (sMsg.LastIndexOf("PAYEND") - (sMsg.IndexOf("PAY") + 3)));
-                clsMain.PrintPayList(sPayData);
-                payList = sPayData.Split('|');
-
-
-                dicCommand["sStoreNo"] = sTranHeader.Substring(6,4);            //점포코드
+                dicCommand["sStoreNo"] = sTranHeader.Substring(6, 4);            //점포코드
                 dicCommand["sSaleDate"] = sTranHeader.Substring(18, 8);        //영업일
                 dicCommand["sPosNo"] = sTranHeader.Substring(10, 4);        //POS번호
                 //dicCommand["sTranNo"] = sTranHeader.Substring(24, 4);        //거래번호
@@ -491,14 +484,14 @@ namespace PosServer
                 dicCommand["sDisAmt"] = sTranHeader.Substring(81, 9);        //총할인금액
                 dicCommand["sCutAmt"] = sTranHeader.Substring(90, 9);        //총에누리금액
                 dicCommand["sCashAmt"] = "";        //현금금액
-                dicCommand["sCardAmt"] = payList[0].Substring(70, 9);        //신용카드금액
+                dicCommand["sCardAmt"] = "";        //신용카드금액
                 dicCommand["sCpnAmt"] = "";        //쿠폰금액
                 dicCommand["sGiftAmt"] = "";        //상품권금액
                 dicCommand["sCashFlag"] = "0";        //현금 FLAG
                 dicCommand["sGcFlag"] = "0";        //상품권 FLAG
                 dicCommand["sPpFlag"] = "0";        //PP FLAG
                 dicCommand["sCouponFlag"] = "0";        //쿠폰 FLAG
-                dicCommand["sCardFlag"] = "1";        //신용카드 FLAG
+                dicCommand["sCardFlag"] = "0";        //신용카드 FLAG
                 dicCommand["sDbFlag"] = "0";        //직불카드 FLAG
                 dicCommand["sPointFlag"] = "0";        //포인트 FLAG
                 dicCommand["sHalbuFlag"] = "0";        //신용카드 할부 FLAG
@@ -509,7 +502,46 @@ namespace PosServer
                 dicCommand["sUpdDate"] = sDate;        //집계일자
                 dicCommand["sSndFlag"] = "1";        //송신 FLAG
                 dicCommand["sSndDate"] = sDate;        //송신일자
-               
+
+                //지불 데이터
+                //아이템ID (2) - 현금:11,쿠폰:10,상품권:12,신용카드:15
+                sPayData = sMsg.Substring((sMsg.IndexOf("PAY") + 3), (sMsg.LastIndexOf("PAYEND") - (sMsg.IndexOf("PAY") + 3)));
+                clsMain.PrintPayList(sPayData);
+                payList = sPayData.Split('|');
+
+                String sPayType = null;   // 지불타입
+                foreach (String sData in payList)
+                {
+                    sPayType = sData.Substring(0, 2);
+                    switch (sPayType)
+                    {
+                        case "11":
+                            //현금
+                            dicCommand["sCashAmt"] = sData.Substring(5, 9);        //현금금액
+                            dicCommand["sCashFlag"] = "1";        //현금 FLAG
+                            break;
+                        case "10":
+                            //쿠폰
+                            dicCommand["sCpnAmt"] = sData.Substring(5, 9);        //쿠폰금액
+                            dicCommand["sCouponFlag"] = "1";        //쿠폰 FLAG
+                            break;
+                        case "12":
+                            //상품권
+                            dicCommand["sGiftAmt"] = sData.Substring(23, 9);        //상품권금액
+                            dicCommand["sGcFlag"] = "1";        //상품권 FLAG
+                            break;
+                        case "15":
+                            //신용카드
+                            dicCommand["sCardAmt"] = sData.Substring(57, 8);        //신용카드금액
+                            dicCommand["sCardFlag"] = "1";        //신용카드 FLAG
+                            break;
+                        case "99":
+                            //마감입금
+                            break;
+                    }
+                }
+
+
                 bCheck = clsMain.SaveTranLog(dicCommand);
                 if( bCheck == true)
                 {
