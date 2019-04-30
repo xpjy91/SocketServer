@@ -674,6 +674,11 @@ namespace PosServer
             String sGubun = ""; //지불방법 (2) - 현금:11,쿠폰:10,상품권:12,신용카드:15
             String sItemId = null;          //아이템ID
             String sItemLen = null;         //아이템길이
+            String sBagAmt = null;          //공병/쇼핑백금액
+            String sQty = null;         //매수
+            String sAmt = null;         //금액
+
+            /*카드*/
             String sTranType = null;        //거래구분
             String sTranKind = null;        //거래종별
             String sHostId = null;          //승인밴사
@@ -695,10 +700,28 @@ namespace PosServer
             String sTranPoint = null;       //거래포인트
             String sValPoint = null;        //유효포인트
             String sCardType = null;        //카드구분 - 0:일반,1:월드패스
-            String sBagAmt = null;          //공병/쇼핑백금액
-
+            
+            /*현금*/
             String sCashAmt = null;         //현금금액
             String sChange = null;          //거스름
+
+            /*쿠폰*/
+            String sCpnType = null;     //쿠폰 구분 (1) - 1:자사,2:타사,3:타사2,4:타사3,5:타사4
+            String sCpnCode = null;     //쿠폰 코드
+            String sCpnQty = null;      //쿠폰 수량
+            String sCpnAmt = null;      //쿠폰 금액
+            String sCustNo = null;      //고객 코드
+            String sPluNo = null;       //단품 코드
+            
+            /*상품권*/
+            String sGcId = null;        //상품권 구분
+            String sGcNo = null;        //상품권 번호
+            String sCashChange = null;  //현금거스름
+            String sStatus = null;      //상품권 조회상태
+
+            /*마감입금*/
+            String sCloseId = null;     //정산ID
+            String sCode = null;        //코드
 
             try
             {
@@ -709,7 +732,6 @@ namespace PosServer
                     {
                         case "11":
                             //현금
-
                             /**
                              *                       CASH_ITEM
                              *                 현금 ITEM ( 30 Byte )
@@ -729,18 +751,70 @@ namespace PosServer
                             Console.WriteLine("==================== 현금ITEM 데이터 ====================");
                             Console.WriteLine("ITEM DATA =============> [" + sData + "]");
                             Console.WriteLine("아이템ID(sItemId : 0,2) =============> [" + sItemId + "]");
-                            Console.WriteLine("아이템길이(sItemLen : 6,4) =============> [" + sItemLen + "]");
-                            Console.WriteLine("현금금액(sCashAmt : 10,4) =============> [" + sCashAmt + "]");
-                            Console.WriteLine("거스름(sChange : 14,4) =============> [" + sChange + "]");
-                            Console.WriteLine("공병/쇼핑백금액(sBagAmt : 18,8) =============> [" + sBagAmt + "]");
+                            Console.WriteLine("아이템길이(sItemLen : 2,3) =============> [" + sItemLen + "]");
+                            Console.WriteLine("현금금액(sCashAmt : 5,9) =============> [" + sCashAmt + "]");
+                            Console.WriteLine("거스름(sChange : 14,8) =============> [" + sChange + "]");
+                            Console.WriteLine("공병/쇼핑백금액(sBagAmt : 22,8) =============> [" + sBagAmt + "]");
                             Console.WriteLine("==================== 현금ITEM 데이터 ====================");
 
                             break;
                         case "10":
                             //쿠폰
+                            /**
+                            *                       CASH_ITEM
+                            *                 쿠폰 ITEM 
+                            *      아이템ID (2)
+                            *      아이템길이 (3)
+                            *      아이템순번 (3)
+                            *      쿠폰 구분 (1) - 1:자사,2:타사,3:타사2,4:타사3,5:타사4
+                            *      쿠폰 코드
+                            *      쿠폰 수량
+                            *      쿠폰 금액
+                            *      고객 코드
+                            *      단품 코드
+                            *      
+                            **/
+
+
                             break;
                         case "12":
                             //상품권
+                            /**
+                            *                       CASH_ITEM
+                            *                 상품권 ITEM ( 49 Byte )
+                            *      아이템ID (2)
+                            *      아이템길이 (3)
+                            *      상품권구분 (2) - 01:자사상품권,02...05:타사상품권
+                            *      상품권번호 (13)
+                            *      매수 (3)
+                            *      금액 (9)
+                            *      현금 거스름 (8)
+                            *      상품권 조회 상태 (1)
+                            *      공병/쇼핑백 판매금액 (8)
+                            *      
+                            **/
+                            sItemId = sData.Substring(0, 2);      //아이템ID
+                            sItemLen = sData.Substring(2, 3);    //아이템길이
+                            sGcId = sData.Substring(5, 2);    //상품권구분
+                            sGcNo = sData.Substring(7, 13);    //상품권번호
+                            sQty = sData.Substring(20, 3);    //매수
+                            sAmt = sData.Substring(23, 9);    //금액
+                            sCashChange = sData.Substring(32, 8);    //현금 거스름
+                            sStatus = sData.Substring(40, 1);    //상품권 조회 상태
+                            sBagAmt = sData.Substring(41, 8);    //공병/쇼핑백판매금액
+                            Console.WriteLine("==================== 상품권ITEM 데이터 ====================");
+                            Console.WriteLine("상품권ITEM DATA =============> [" + sData + "]");
+                            Console.WriteLine("아이템ID(sItemId : 0,2) =============> [" + sItemId + "]");
+                            Console.WriteLine("아이템길이(sItemLen : 2,3) =============> [" + sItemLen + "]");
+                            Console.WriteLine("상품권구분(sGcId : 5,2) =============> [" + sGcId + "]");
+                            Console.WriteLine("상품권번호(sGcNo : 7,13) =============> [" + sGcNo + "]");
+                            Console.WriteLine("매수(sQty : 20,3) =============> [" + sQty + "]");
+                            Console.WriteLine("금액(sAmt : 23,9) =============> [" + sAmt + "]");
+                            Console.WriteLine("현금거스름(sCashChange : 32,8) =============> [" + sCashChange + "]");
+                            Console.WriteLine("상품권 조회상태(sStatus : 40,1) =============> [" + sStatus + "]");
+                            Console.WriteLine("공병/쇼핑백금액(sBagAmt : 41,8) =============> [" + sBagAmt + "]");
+                            Console.WriteLine("==================== 상품권ITEM 데이터 ====================");
+
                             break;
                         case "15":
                             //신용카드
@@ -825,6 +899,35 @@ namespace PosServer
                             Console.WriteLine("공병/쇼핑백금액(sBagAmt : 171,8) =============> [" + sBagAmt + "]");
                             Console.WriteLine("카드구분(sCardType : 179,1) =============> [" + sCardType + "]");
                             Console.WriteLine("==================== 카드ITEM 데이터 ====================");
+                            break;
+                        case "99" :
+                            //마감입금
+                            /**
+                             *                       CASH_ITEM
+                             *                 마감입금 ITEM ( 29 Byte )
+                             *      아이템ID (2)
+                             *      아이템길이 (3)
+                             *      정산ID (4)
+                             *      코드 (4)
+                             *      매수 (6)
+                             *      금액 (10)
+                             *      
+                             **/
+                            sItemId = sData.Substring(0, 2);      //아이템ID
+                            sItemLen = sData.Substring(2, 3);     //아이템길이
+                            sCloseId = sData.Substring(5, 4);     //정산ID
+                            sCode = sData.Substring(9, 4);        //코드
+                            sQty = sData.Substring(13, 6);        //매수
+                            sAmt = sData.Substring(19, 10);       //금액
+                            Console.WriteLine("==================== 마감입금ITEM 데이터 ====================");
+                            Console.WriteLine("마감입금ITEM DATA =============> [" + sData + "]");
+                            Console.WriteLine("아이템ID(sItemId : 0,2) =============> [" + sItemId + "]");
+                            Console.WriteLine("아이템길이(sItemLen : 2,3) =============> [" + sItemLen + "]");
+                            Console.WriteLine("정산ID(sCloseId : 5,4) =============> [" + sCloseId + "]");
+                            Console.WriteLine("코드(sGcNo : 9,4) =============> [" + sCode + "]");
+                            Console.WriteLine("매수(sQty : 13,6) =============> [" + sQty + "]");
+                            Console.WriteLine("금액(sAmt : 19,10) =============> [" + sAmt + "]");
+                            Console.WriteLine("==================== 마감입금ITEM 데이터 ====================");
                             break;
                     }
                 }
