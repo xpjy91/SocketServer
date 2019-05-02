@@ -766,5 +766,17 @@ namespace PosServer
             }
             return sRet;
         }
+
+        private void FrmMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            try
+            {
+                ClsDB.CloseDataBase();
+            }
+            catch (Exception ex)
+            {
+                ClsLog.WriteLog(ClsLog.LOG_EXCEPTION, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+        }
     }
 }
