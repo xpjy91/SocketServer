@@ -517,23 +517,23 @@ namespace PosServer
                     {
                         case "11":
                             //현금
-                            dicCommand["sCashAmt"] = sData.Substring(5, 9);        //현금금액
-                            dicCommand["sCashFlag"] = "1";        //현금 FLAG
+                            dicCommand["sCashAmt"] = sData.Substring(5, 9); //현금금액
+                            dicCommand["sCashFlag"] = "1";                  //현금 FLAG
                             break;
                         case "10":
                             //쿠폰
-                            dicCommand["sCpnAmt"] = sData.Substring(5, 9);        //쿠폰금액
-                            dicCommand["sCouponFlag"] = "1";        //쿠폰 FLAG
+                            dicCommand["sCpnAmt"] = sData.Substring(5, 9);  //쿠폰금액
+                            dicCommand["sCouponFlag"] = "1";                //쿠폰 FLAG
                             break;
                         case "12":
                             //상품권
-                            dicCommand["sGiftAmt"] = sData.Substring(23, 9);        //상품권금액
-                            dicCommand["sGcFlag"] = "1";        //상품권 FLAG
+                            dicCommand["sGiftAmt"] = sData.Substring(23, 9);//상품권금액
+                            dicCommand["sGcFlag"] = "1";                    //상품권 FLAG
                             break;
                         case "15":
                             //신용카드
-                            dicCommand["sCardAmt"] = sData.Substring(57, 8);        //신용카드금액
-                            dicCommand["sCardFlag"] = "1";        //신용카드 FLAG
+                            dicCommand["sCardAmt"] = sData.Substring(57, 8);//신용카드금액
+                            dicCommand["sCardFlag"] = "1";                  //신용카드 FLAG
                             break;
                         case "99":
                             //마감입금
